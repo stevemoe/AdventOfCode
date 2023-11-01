@@ -1,9 +1,8 @@
 from collections import Counter
 import time
 
-
-def read_input_file(dir):
-    with open(dir, "r") as f:
+def read_input_file(file_path):
+    with open(file_path, "r") as f:
         return f.read()
 
 
@@ -17,12 +16,12 @@ def count_letters(box_id, number):
         return True
 
 
-def find_correct_boxes(ids):
-    correct_boxes = list(filter(lambda own_id: compare_ids(own_id, ids), ids))
-    return correct_boxes
+def find_correct_box_id(ids):
+    correct_box_id = str(next(filter(lambda own_id: find_closest_matching_ids(own_id, ids), ids), None))
+    return correct_box_id
 
 
-def compare_ids(own_id, ids):
+def find_closest_matching_ids(own_id, ids):
     for other_id in ids:
         same_letters = [1 if letter == other_id[num] else 0 for num, letter in enumerate(own_id)]
         if same_letters.count(0) == 1:
@@ -40,15 +39,13 @@ def solve_puzzle_1(ids):
 
 
 def solve_puzzle_2(ids):
-    correct_box = find_correct_boxes(ids)
-    return remove_letter_by_index(correct_box[0], letter_index)
+    return remove_letter_by_index(find_correct_box_id(ids), letter_index)
+
 
 start = time.time()
 letter_index = None
 box_ids = read_input_file("input/day_02.txt").splitlines()
-
-
 print("Puzzle 1: Checksum is", solve_puzzle_1(box_ids))
 print("Puzzle 2: Common letters between two correct box IDs:", solve_puzzle_2(box_ids))
 end = time.time()
-print("Code execution in ms:", end - start)
+print("Code execution time:", end - start)

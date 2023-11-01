@@ -1,12 +1,13 @@
 from collections import Counter
 import time
+import tracemalloc
 
+tracemalloc.start()
 start = time.time()
 
 with open("input/day_02.txt", "r") as f:
     box_ids = f.read().splitlines()
 
-print()
 two_letter_count = 0
 three_letter_count = 0
 common_letters = None
@@ -52,4 +53,7 @@ print("Common letters between two correct box IDs:", common_letters)
 
 
 end = time.time()
-print("Code execution in ms:", end - start)
+print("Code execution time:", end - start)
+
+print(tracemalloc.get_traced_memory())
+tracemalloc.stop()
