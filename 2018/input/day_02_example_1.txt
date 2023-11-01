@@ -5,3 +5,10 @@ abcccd
 aabcdd
 abcdee
 ababab
+abcde
+fghij
+klmno
+pqrst
+fguij
+axcye
+wvxyz

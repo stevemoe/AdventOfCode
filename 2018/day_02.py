@@ -1,4 +1,7 @@
 from collections import Counter
+import time
+
+start = time.time()
 
 with open("input/day_02.txt", "r") as f:
     box_ids = f.read().splitlines()
@@ -46,3 +49,7 @@ checksum = two_letter_count * three_letter_count
 print("Checksum:", checksum)
 
 print("Common letters between two correct box IDs:", common_letters)
+
+
+end = time.time()
+print("Code execution in ms:", end - start)
