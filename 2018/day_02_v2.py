@@ -1,33 +1,33 @@
 from collections import Counter
 import time
+import itertools
+
 
 def read_input_file(file_path):
     with open(file_path, "r") as f:
         return f.read()
 
 
-def count_multiple_letters_in_ids(ids, number):
-    number_of_multiple_letters = list(filter(lambda box_id: count_letters(box_id, number), ids))
-    return len(number_of_multiple_letters)
+def count_multiple_letters_in_ids(ids, number_of_letters):
+    return len(list(filter(lambda box_id: count_letters(box_id, number_of_letters), ids)))
 
 
-def count_letters(box_id, number):
-    if number in Counter(box_id).values():
+def count_letters(box_id, number_of_letters):
+    if number_of_letters in Counter(box_id).values():
         return True
 
 
 def find_correct_box_id(ids):
-    correct_box_id = str(next(filter(lambda own_id: find_closest_matching_ids(own_id, ids), ids), None))
-    return correct_box_id
+    correct_box_ids = list(next(filter(lambda box_id: find_closest_matching_ids(box_id[0], box_id[1]), itertools.product(ids, ids))))
+    return correct_box_ids[0]
 
 
-def find_closest_matching_ids(own_id, ids):
-    for other_id in ids:
-        same_letters = [1 if letter == other_id[num] else 0 for num, letter in enumerate(own_id)]
-        if same_letters.count(0) == 1:
-            global letter_index
-            letter_index = same_letters.index(0)
-            return True
+def find_closest_matching_ids(id_1, id_2):
+    same_letters = [1 if letter == id_2[num] else 0 for num, letter in enumerate(id_1)]
+    if same_letters.count(0) == 1:
+        global letter_index
+        letter_index = same_letters.index(0)
+        return True
 
 
 def remove_letter_by_index(string, index):
@@ -44,8 +44,8 @@ def solve_puzzle_2(ids):
 
 start = time.time()
 letter_index = None
-box_ids = read_input_file("input/day_02.txt").splitlines()
+box_ids = read_input_file("input/day_02_example_2.txt").splitlines()
 print("Puzzle 1: Checksum is", solve_puzzle_1(box_ids))
 print("Puzzle 2: Common letters between two correct box IDs:", solve_puzzle_2(box_ids))
 end = time.time()
-print("Code execution time:", end - start)
+print("Code execution time in s:", end - start)
