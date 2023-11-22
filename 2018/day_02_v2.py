@@ -43,9 +43,10 @@ def solve_puzzle_2(ids):
 
 
 start = time.time()
-letter_index = None
-box_ids = read_input_file("input/day_02_example_2.txt").splitlines()
-print("Puzzle 1: Checksum is", solve_puzzle_1(box_ids))
+start = pfc()
+letter_index = 0
+box_ids = read_input_file("input/day_02.txt").splitlines()
+print("Puzzle 1: Checksum is", solve_puzzle_1(box_ids), pfc()-start)
 print("Puzzle 2: Common letters between two correct box IDs:", solve_puzzle_2(box_ids))
 end = time.time()
 print("Code execution time in s:", end - start)

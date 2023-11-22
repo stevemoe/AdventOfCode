@@ -1,8 +1,6 @@
 from collections import Counter
 import time
-import tracemalloc
 
-tracemalloc.start()
 start = time.time()
 
 with open("input/day_02.txt", "r") as f:
@@ -15,7 +13,7 @@ common_letters = None
 
 def calculate_letter_counts():
     letter_counter = Counter(box_id)
-    if 2 in letter_counter.values(): #evtl filter verwenden
+    if 2 in letter_counter.values():
         global two_letter_count
         two_letter_count += 1
     if 3 in letter_counter.values():
@@ -54,6 +52,3 @@ print("Common letters between two correct box IDs:", common_letters)
 
 end = time.time()
 print("Code execution time:", end - start)
-
-print(tracemalloc.get_traced_memory())
-tracemalloc.stop()
