@@ -11,6 +11,7 @@ def read_puzzle(filename):
     with open("inputs/" + filename, "r") as f:
         return f.read().splitlines()
 
+
 def find_fully_containing_ranges(shift):
     shift_1 = reformat_shifts(shift)[0]
     shift_2 = reformat_shifts(shift)[1]
@@ -27,12 +28,14 @@ def find_partially_containing_ranges(shift):
     shift_2 = reformat_shifts(shift)[1]
     return False if shift_1["end"] < shift_2["start"] or shift_2["end"] < shift_1["start"] else True
 
+
 def reformat_shifts(shift):
     shift_1 = shift[:shift.find(",")]
     shift_2 = shift[shift.find(",") + 1:]
     shift_1 = {"start": int(shift_1[:shift_1.find("-")]), "end": int(shift_1[shift_1.find("-") + 1:])}
     shift_2 = {"start": int(shift_2[:shift_2.find("-")]), "end": int(shift_2[shift_2.find("-") + 1:])}
     return shift_1, shift_2
+
 
 def solve_part_1(puzzle):
     assignment_pairs = len(list(filter(find_fully_containing_ranges, puzzle)))
