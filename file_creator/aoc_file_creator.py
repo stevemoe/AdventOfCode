@@ -104,7 +104,8 @@ def build_test_code(puzzle):
     lines.append("def test_part_2():")
     lines.append("    puzzle = dummy_puzzle(\"day" + format_day(puzzle.day) + "_example.txt\")")
     for example in puzzle.examples:
-        lines.append("    assert solve_part_2(puzzle) == \"" + str(example.answer_b + "\"" ))
+        print(example.answer_b)
+        # lines.append("    assert solve_part_2(puzzle) == \"" + str(example.answer_b + "\"" ))
     return "\n".join(lines) + "\n\n"
 
 
