@@ -12,54 +12,45 @@ def read_puzzle(filename):
         return f.read().splitlines()
 
 
-def is_int(char):
-    return True if char.isdigit() else False
+def combine_numbers_to_value(value):
+    return (value[0] * 10) + value[-1]
 
 
-def extract_values(calibration_text, part):
-    value = []
-    if part == 1:
-        value = list(map(lambda x: int(x), (filter(is_int, calibration_text))))
-    else:
-        value = find_numbers(calibration_text)
-    value = (value[0] * 10) + (value[-1])
-    print("value:", value)
-    return int(value)
+def extract_values_from_digits(text):
+    numbers = list(map(lambda x: int(x), filter(lambda char: char.isdigit(), text)))
+    return combine_numbers_to_value(numbers)
 
 
-def find_numbers(calibration_text):
-    print(list(enumerate(calibration_text)))
-    value = list(filter(lambda x: x is not None, (map(lambda char: is_number(char, calibration_text), enumerate(calibration_text)))))
-    print("value:", value)
-    return value
+def extract_values_from_text(text):
+    numbers = list(filter(lambda x: x is not None,
+                          map(lambda char: translate_numbers_from_text(char[1], char[0], text), enumerate(text))))
+    return combine_numbers_to_value(numbers)
 
 
-def is_number(char, calibration_text):
-    numbers_as_strings = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9}
-    if is_int(char[1]):
-        return int(char[1])
+def translate_numbers_from_text(char, index, text):
+    numbers_as_strings = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8,
+                          "nine": 9}
+    if char.isdigit():
+        return int(char)
     else:
         for number in numbers_as_strings:
-            if number == calibration_text[slice(char[0], char[0] + len(number))]:
-                print(char[1], number, calibration_text[slice(char[0], char[0] + len(number))])
-                print(numbers_as_strings[number])
-                num = numbers_as_strings[number]
-                print("num", num)
-                return num
-    return None
+            if char == number[0] and number == text[index:index + len(number)]:
+                return numbers_as_strings[number]
 
 
-def count_values(puzzle, part):
-    return sum(map(lambda calibration_text: extract_values(calibration_text, part), puzzle))
+def add_up_values(puzzle, part):
+    return sum(
+        map(lambda calibration_text: extract_values_from_digits(
+            calibration_text) if part == 1 else extract_values_from_text(
+            calibration_text), puzzle))
 
 
 def solve_part_1(puzzle):
-    return count_values(puzzle, 1)
+    return add_up_values(puzzle, 1)
 
 
 def solve_part_2(puzzle):
-    solution = count_values(puzzle, 2)
-    return solution
+    return add_up_values(puzzle, 2)
 
 
 if __name__ == "__main__":
