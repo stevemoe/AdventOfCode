@@ -26,8 +26,8 @@ def get_power_of_set(game):
 def get_sets(game):
     cubes = {"red": 12, "green": 13, "blue": 14}
     draws = list(map(lambda x: tuple(reversed(x.split())), map(str.strip, game.replace(";", ",").split(","))))
-    x = list(map(lambda x: int(x[1]) <= cubes[x[0]], draws))
-    return False not in x
+    possible_sets = list(map(lambda x: int(x[1]) <= cubes[x[0]], draws))
+    return False not in possible_sets
 
 
 def solve_part_1(puzzle):
