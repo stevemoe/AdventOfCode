@@ -3,64 +3,43 @@
 # Tag 2: Cube Conundrum
 # Autor: Stefan Mohr (stefan.mo)
 # Requirements: keine
-from functools import reduce
+
 from math import prod
 from time import perf_counter as pfc
 
 
 def read_puzzle(filename):
     with open("inputs/" + filename, "r") as f:
-        return f.read().splitlines()
+        return list(map(lambda x: x.split(":")[1], f.read().splitlines()))  # remove "Game 1:" etc. from input
 
 
-def control_set_2(game_set):
-
-    print("set_tuples", game_set)
-    possible = list(map(lambda x: int(x[0]) <= loads[x[1]], set_tuples))
-    return False if False in possible else True
-
-
-def count_cubes(game):
-    game = game.replace(";", ",")
-    sets = list(map(lambda x: tuple(x.split(" ")), map(str.strip, game.split(","))))
-    # print(sets)
+def get_power_of_set(game):
+    draws = list(map(lambda x: reversed(tuple(x.split(" "))), map(str.strip, game.replace(";", ",").split(","))))
     min_load = {"red": 0, "green": 0, "blue": 0}
-    for set in sets:
-        if min_load[set[1]] < int(set[0]):
-            min_load[set[1]] = int(set[0])
-        else:
-            None
-    # possible_sets = list(map(lambda x: ((min_load[x[1]] = x[0]) if min_load[x[1]] < x[0] else (min_load[x[1]] ), sets))
-    print(min_load)
-    print(prod(min_load.values()))
+    for cube in draws:
+        color, value = cube
+        if min_load[color] < int(value):
+            min_load[color] = int(value)
     return prod(min_load.values())
 
 
 def control_set(game_set):
-    loads = {"red": 12, "green": 13, "blue": 14}
+    cubes = {"red": 12, "green": 13, "blue": 14}
     set_tuples = list(map(lambda x: tuple(x.split(" ")), map(str.strip, game_set.split(","))))
-    possible = list(map(lambda x: int(x[0]) <= loads[x[1]], set_tuples))
-    return False if False in possible else True
+    possible = list(map(lambda x: int(x[0]) <= cubes[x[1]], set_tuples))
+    return False not in possible
 
 
 def get_sets(game):
-    sets = list(map(str.strip, game.split(";")))
-    possible_sets = list(map(control_set, sets))
-    return possible_sets
+    return list(map(control_set, map(str.strip, game.split(";"))))
+
 
 def solve_part_1(puzzle):
-    games = list(map(lambda x: x.split(":")[1], puzzle))
-    print("games:", games)
-    ctr = 0
-    solution = list(map(lambda x: x[0] + 1 if False not in get_sets(x[1]) else 0, enumerate(games)))
-    print(solution)
-    return sum(solution)
+    return sum(list(map(lambda x: x[0] + 1 if False not in get_sets(x[1]) else 0, enumerate(puzzle))))
 
 
 def solve_part_2(puzzle):
-    games = list(map(lambda x: x.split(":")[1], puzzle))
-    solution = list(map(count_cubes, games))
-    return sum(solution)
+    return sum(list(map(get_power_of_set, puzzle)))
 
 
 if __name__ == "__main__":
