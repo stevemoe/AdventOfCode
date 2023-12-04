@@ -13,8 +13,11 @@ def read_puzzle(filename):
         return list(map(lambda x: x.split(":")[1], f.read().splitlines()))  # remove "Game 1:" etc. from input
 
 
-def get_power_of_set(game):
-    draws = list(map(lambda x: tuple(reversed(x.split())), map(str.strip, game.replace(";", ",").split(","))))
+def list_draws_as_tuples(game):
+    return list(map(lambda x: tuple(reversed(x.split())), map(str.strip, game.replace(";", ",").split(","))))
+
+def get_power_of_game(game):
+    draws = list_draws_as_tuples(game)
     min_load = {"red": 0, "green": 0, "blue": 0}
     for cube in draws:
         color, value = cube
@@ -25,18 +28,17 @@ def get_power_of_set(game):
 
 def get_sets(game):
     cubes = {"red": 12, "green": 13, "blue": 14}
-    draws = list(map(lambda x: tuple(reversed(x.split())), map(str.strip, game.replace(";", ",").split(","))))
+    draws = list_draws_as_tuples(game)
     possible_sets = list(map(lambda x: int(x[1]) <= cubes[x[0]], draws))
     return False not in possible_sets
 
 
-
 def solve_part_1(puzzle):
-    return sum(list(map(lambda x: x[0] + 1 if get_sets(x[1]) else 0, enumerate(puzzle))))
+    return sum(map(lambda x: x[0] + 1 if get_sets(x[1]) else 0, enumerate(puzzle)))
 
 
 def solve_part_2(puzzle):
-    return sum(list(map(get_power_of_set, puzzle)))
+    return sum(map(get_power_of_game, puzzle))
 
 
 if __name__ == "__main__":
