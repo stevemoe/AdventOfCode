@@ -27,15 +27,12 @@ def initialize_card_dict(puzzle):
     return {card: 1 for card in puzzle}
 
 
-def get_card_count(card_dict, card):
-    return card_dict[card]
+def get_card_count(card_dict, key):
+    return card_dict[key]
 
 
 def update_card_count(card, card_dict, key):
-    print(key, "=", card_dict[key], "=>", get_card_count(card_dict, card))
     card_dict[key] += get_card_count(card_dict, card)
-    print(card_dict[key])
-    print("------------------")
 
 
 def solve_part_1(puzzle):
@@ -47,7 +44,6 @@ def solve_part_2(puzzle):
     for card_index, card in enumerate(puzzle):
         match_count = len(get_matching_numbers(card))
         for match in range(1, match_count + 1):
-            print(card, "match_count =", match, "/", match_count)
             update_card_count(card, card_dict, puzzle[card_index + match])
     return sum(card_dict.values())
 
