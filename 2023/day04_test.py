@@ -21,6 +21,6 @@ def test_part_1():
 def test_part_2():
     puzzle = dummy_puzzle("day04_example.txt")
     assert solve_part_2(puzzle) == 30
-    # puzzle = dummy_puzzle("day04.txt")
-    # assert solve_part_2(puzzle) == 13261850
+    puzzle = dummy_puzzle("day04.txt")
+    assert solve_part_2(puzzle) == 13261850
 

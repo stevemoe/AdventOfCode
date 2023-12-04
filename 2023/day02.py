@@ -30,6 +30,7 @@ def get_sets(game):
     return False not in possible_sets
 
 
+
 def solve_part_1(puzzle):
     return sum(list(map(lambda x: x[0] + 1 if get_sets(x[1]) else 0, enumerate(puzzle))))
 
