@@ -23,10 +23,6 @@ def calculate_winning_points(card):
     return reduce(lambda points, x: points + 1 if points == 0 else points * 2, get_matching_numbers(card), 0)
 
 
-def add_up_wins(game):
-    return len(get_matching_numbers(game))
-
-
 def get_card_count(dict, card):
     return dict[card[1]]
 
@@ -36,10 +32,11 @@ def solve_part_1(puzzle):
 
 
 def solve_part_2(puzzle):
-    puzzle_dict = dict(map(lambda x: (x, 1), puzzle))
+    puzzle_dict = dict(map(lambda numbers: (numbers, 1), puzzle))
     for card in enumerate(puzzle):
-        for y in range(1, add_up_wins(card[1]) + 1):
-            index = card[0] + y
+        match_count = len(get_matching_numbers(card[1]))
+        for match in range(1, match_count + 1):
+            index = card[0] + match
             puzzle_dict[puzzle[index]] += get_card_count(puzzle_dict, card)
     return sum(puzzle_dict.values())
 
