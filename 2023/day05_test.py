@@ -19,9 +19,11 @@ def dummy_puzzle(filename):
 def test_part_1():
     puzzle = dummy_puzzle("day05_example.txt")
     assert solve_part_1(puzzle) == 35
+    puzzle = dummy_puzzle("day05.txt")
+    assert solve_part_1(puzzle) == 324724204
 
 
 def test_part_2():
     puzzle = dummy_puzzle("day05_example.txt")
-    assert solve_part_2(puzzle) == None
+    assert solve_part_2(puzzle) == 46
 
