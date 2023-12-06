@@ -76,22 +76,38 @@ def solve_part_1(puzzle):
     return min(location_list)
 
 
+def apply_range(seed_range, conversion):
+    intersected_ranges = []
+    for (destination, source, length) in conversion:
+        src_end = source + length
+        filtered_ranges = []
+        while seed_range:
+            (start, end) = seed_range.pop()
+            before = (start, min(end, source))
+            inter = (max(start, source), min(src_end, end))
+            after = (max(src_end, start), end)
+            if before[1] > before[0]:
+                filtered_ranges.append(before)
+            if inter[1] > inter[0]:
+                intersected_ranges.append((inter[0] - source + destination, inter[1] - source + destination))
+            if after[1] > after[0]:
+                filtered_ranges.append(after)
+        seed_range = filtered_ranges
+    return intersected_ranges + seed_range
+
+
 def solve_part_2(puzzle):
-    seeds = get_seeds_from_range(puzzle)
-    conversions = puzzle[1:]
+    matches = re.findall(r"(\d+)\s+(\d+)", puzzle[0])
+    seeds = list((int(match[0]), int(match[1])) for match in matches)
     location_list = []
-    # seeds = min(seeds)
+    for start, length in seeds:
+        seed_range = [(start, start + length)]
+        for f in puzzle[1:]:
+            conversion = list((int(match[0]), int(match[1]), int(match[-1])) for match in re.findall(r"(\d+)\s+(\d+)\s(\d+)", f))
+            # print(conversion)   # [(50, 98, 2), (52, 50, 48)]
+            seed_range = apply_range(seed_range, conversion)
 
-
-    for seed in seeds:
-        source = seed
-        for conversion in conversions:
-            text = conversion.splitlines()
-            text = list(map(lambda x: x.strip(), text))
-
-            conversion_text = list(map(lambda x: x.split(), filter(lambda x: x[0].isdigit(), text)))
-            source = seed_in_range(int(source), conversion_text)
-        location_list.append(source)
+        location_list.append(min(seed_range)[0])
     return min(location_list)
 
 
