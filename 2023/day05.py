@@ -108,6 +108,7 @@ def solve_part_2(puzzle):
             seed_range = apply_range(seed_range, conversion)
 
         location_list.append(min(seed_range)[0])
+
     return min(location_list)
 
 
