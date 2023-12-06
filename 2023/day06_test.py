@@ -14,9 +14,13 @@ def dummy_puzzle(filename):
 def test_part_1():
     puzzle = dummy_puzzle("day06_example.txt")
     assert solve_part_1(puzzle) == 288
+    puzzle = dummy_puzzle("day06.txt")
+    assert solve_part_1(puzzle) == 449550
 
 
 def test_part_2():
     puzzle = dummy_puzzle("day06_example.txt")
     assert solve_part_2(puzzle) == 71503
+    puzzle = dummy_puzzle("day06.txt")
+    assert solve_part_2(puzzle) == 28360140
 
