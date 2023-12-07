@@ -7,6 +7,8 @@
 from time import perf_counter as pfc
 from collections import Counter
 
+TYPES_TOTAL = 7
+
 
 def read_puzzle(filename):
     with open("inputs/" + filename, "r") as f:
@@ -33,7 +35,6 @@ def calculate_rank(hand):
     else:
         value = 0
     return (hand[0], hand[1], value, values)
-
 
 
 def joker_val(hand):
@@ -94,42 +95,15 @@ def compare(entry):
 
 def solve_part_1(puzzle):
     hands = list(map(lambda x: (x.split()[0], int(x.split()[1])), puzzle))
-    strength_of_hands = list(map(calculate_rank, hands))
-    hands_by_type = list()
-    five_of_a_kind = list(filter(lambda x: x[2] == 6, strength_of_hands))
-    four_of_a_kind = list(filter(lambda x: x[2] == 5, strength_of_hands))
-    full_house = list(filter(lambda x: x[2] == 4, strength_of_hands))
-    three_of_a_kind = list(filter(lambda x: x[2] == 3, strength_of_hands))
-    two_pairs = list(filter(lambda x: x[2] == 2, strength_of_hands))
-    pair = list(filter(lambda x: x[2] == 1, strength_of_hands))
-    high_card = list(filter(lambda x: x[2] == 0, strength_of_hands))
 
-    five_of_a_kind_sorted = sorted(five_of_a_kind, key=compare, reverse=False)
-    four_of_a_kind_sorted = sorted(four_of_a_kind, key=compare, reverse=False)
-    full_house_sorted = sorted(full_house, key=compare, reverse=False)
-    three_of_a_kind_sorted = sorted(three_of_a_kind, key=compare, reverse=False)
-    two_pairs_sorted = sorted(two_pairs, key=compare, reverse=False)
-    pair_sorted = sorted(pair, key=compare, reverse=False)
-    high_card_sorted = sorted(high_card, key=compare, reverse=False)
-    ranked_hands = []
-    for hand in high_card_sorted:
-        ranked_hands.append(hand)
-    for hand in pair_sorted:
-        ranked_hands.append(hand)
-    for hand in two_pairs_sorted:
-        ranked_hands.append(hand)
-    for hand in three_of_a_kind_sorted:
-        ranked_hands.append(hand)
-    for hand in full_house_sorted:
-        ranked_hands.append(hand)
-    for hand in four_of_a_kind_sorted:
-        ranked_hands.append(hand)
-    for hand in five_of_a_kind_sorted:
-        ranked_hands.append(hand)
+    type_sorted_hands = list(
+        map(lambda type_number: sorted(filter(lambda x: (hand_type := x[2]) == type_number, map(calculate_rank, hands)),
+                                       key=compare), range(TYPES_TOTAL)))
 
-    total_winnings = 0
-    for index, hand in enumerate(ranked_hands):
-        total_winnings += hand[1] * (index + 1)
+    ranked_hands = sum(type_sorted_hands, [])
+
+    print(ranked_hands)
+    total_winnings = sum(map(lambda x: (bid := x[1][1]) * (rank := x[0]), enumerate(ranked_hands, start=1)))
     return total_winnings
 
 
