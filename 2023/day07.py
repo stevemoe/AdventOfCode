@@ -15,135 +15,83 @@ def read_puzzle(filename):
         return f.read().splitlines()
 
 
-def calculate_rank(hand):
-    cards = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"]
-    card_values = dict(zip(reversed(cards), range(13)))
-    card_counter = Counter(hand[0])
-    values = list(map(lambda x: card_values[x], hand[0]))
-    if 5 in card_counter.values():
-        value = 6
-    elif 4 in card_counter.values():
-        value = 5
-    elif 3 in card_counter.values() and 2 in card_counter.values():
-        value = 4
-    elif 3 in card_counter.values():
-        value = 3
-    elif 2 in card_counter.values() and list(card_counter.values()).count(2) == 2:
-        value = 2
-    elif 2 in card_counter.values():
-        value = 1
-    else:
-        value = 0
-    return (hand[0], hand[1], value, values)
+def find_hand_type(card_counter):
+    if 5 in card_counter:
+        return 6
+    if 4 in card_counter:
+        return 5
+    if 3 in card_counter and 2 in card_counter:
+        return 4
+    if 3 in card_counter:
+        return 3
+    if list(card_counter).count(2) == 2:
+        return 2
+    if 2 in card_counter:
+        return 1
+    return 0
 
 
-def joker_val(hand):
-    cards, bid, value, values, value_counter = hand
+def find_hand_type_with_joker(cards):
     joker_count = cards.count("J")
+
     if joker_count == 5:
-        value = 6
-        return (cards, bid, value, values, value_counter)
+        return 6
+
+    remaining_cards = cards.replace("J", "")
+    max_same = max(Counter(remaining_cards).values())
+    total_same = joker_count + max_same
+
+    if total_same == 5:
+        return 6
+    elif total_same == 4:
+        return 5
+    elif total_same == 3:
+        return 4 if len(Counter(remaining_cards).values()) == 2 else 3
+    elif total_same == 2:
+        return 1
     else:
-        remaining_cards = cards.replace("J", "")
-        max_same = max(Counter(remaining_cards).values())
-        if joker_count + max_same == 5:
-            value = 6
-        elif joker_count + max_same == 4:
-            value = 5
-        elif joker_count + max_same == 3:
-            if len(Counter(remaining_cards).values()) == 2:
-                value = 4
-            else:
-                value = 3
-        elif joker_count + max_same == 2:
-            value = 1
-
-        return (cards, bid, value, values, value_counter)
+        return 0
 
 
-def calculate_rank2(hand):
-    cards = ["A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J"]
-    card_values = dict(zip(reversed(cards), range(13)))
-    card_counter = Counter(hand[0])
-    values = list(map(lambda x: card_values[x], hand[0]))
-    value_counter = Counter(values)
-    if 5 in card_counter.values():
-        value = 6
-    elif 4 in card_counter.values():
-        value = 5
-    elif 3 in card_counter.values() and 2 in card_counter.values():
-        value = 4
-    elif 3 in card_counter.values():
-        value = 3
-    elif 2 in card_counter.values() and list(card_counter.values()).count(2) == 2:
-        value = 2
-    elif 2 in card_counter.values():
-        value = 1
+def determine_hand_attributes(hand, deck, joker):
+    cards, bid = hand
+    card_count = Counter(hand[0]).values()
+    card_values = list(map(lambda x: deck[x], hand[0]))
+
+    if joker and "J" in cards:
+        hand_type = find_hand_type_with_joker(cards)
+        return cards, bid, hand_type, card_values
     else:
-        value = 0
-
-    if "J" in hand[0]:
-        hand = (hand[0], hand[1], value, values, value_counter)
-        hand_modified = joker_val(hand)
-        return (hand_modified[0], hand_modified[1], hand_modified[2], hand_modified[3])
-    return (hand[0], hand[1], value, values)
+        hand_type = find_hand_type(card_count)
+        return cards, bid, hand_type, card_values
 
 
 def compare(entry):
     return entry[3]
 
 
-def solve_part_1(puzzle):
+def rank_hands(hands, deck, joker):
+    return sum(
+        map(lambda type_number: sorted(filter(lambda x: (hand_type := x[2]) == type_number,
+                                              map(lambda hand: determine_hand_attributes(hand, deck, joker), hands)),
+                                       key=compare), range(TYPES_TOTAL)), [])
+
+
+def calculate_total_winnings(puzzle, deck, joker=False):
     hands = list(map(lambda x: (x.split()[0], int(x.split()[1])), puzzle))
+    ranked_hands = rank_hands(hands, deck, joker)
+    return sum(map(lambda x: (bid := x[1][1]) * (rank := x[0]), enumerate(ranked_hands, start=1)))
 
-    type_sorted_hands = list(
-        map(lambda type_number: sorted(filter(lambda x: (hand_type := x[2]) == type_number, map(calculate_rank, hands)),
-                                       key=compare), range(TYPES_TOTAL)))
 
-    ranked_hands = sum(type_sorted_hands, [])
-
-    print(ranked_hands)
-    total_winnings = sum(map(lambda x: (bid := x[1][1]) * (rank := x[0]), enumerate(ranked_hands, start=1)))
-    return total_winnings
+def solve_part_1(puzzle):
+    deck = {'2': 0, '3': 1, '4': 2, '5': 3, '6': 4, '7': 5, '8': 6, '9': 7, 'T': 8, 'J': 9, 'Q': 10, 'K': 11, 'A': 12}
+    return calculate_total_winnings(puzzle, deck)
 
 
 def solve_part_2(puzzle):
-    hands = list(map(lambda x: (x.split()[0], int(x.split()[1])), puzzle))
-    strength_of_hands = list(map(calculate_rank2, hands))
-    five_of_a_kind = list(filter(lambda x: x[2] == 6, strength_of_hands))
-    four_of_a_kind = list(filter(lambda x: x[2] == 5, strength_of_hands))
-    full_house = list(filter(lambda x: x[2] == 4, strength_of_hands))
-    three_of_a_kind = list(filter(lambda x: x[2] == 3, strength_of_hands))
-    two_pairs = list(filter(lambda x: x[2] == 2, strength_of_hands))
-    pair = list(filter(lambda x: x[2] == 1, strength_of_hands))
-    high_card = list(filter(lambda x: x[2] == 0, strength_of_hands))
-
-    five_of_a_kind_sorted = sorted(five_of_a_kind, key=compare, reverse=False)
-    four_of_a_kind_sorted = sorted(four_of_a_kind, key=compare, reverse=False)
-    full_house_sorted = sorted(full_house, key=compare, reverse=False)
-    three_of_a_kind_sorted = sorted(three_of_a_kind, key=compare, reverse=False)
-    two_pairs_sorted = sorted(two_pairs, key=compare, reverse=False)
-    pair_sorted = sorted(pair, key=compare, reverse=False)
-    high_card_sorted = sorted(high_card, key=compare, reverse=False)
-    ranked_hands = []
-    for hand in high_card_sorted:
-        ranked_hands.append(hand)
-    for hand in pair_sorted:
-        ranked_hands.append(hand)
-    for hand in two_pairs_sorted:
-        ranked_hands.append(hand)
-    for hand in three_of_a_kind_sorted:
-        ranked_hands.append(hand)
-    for hand in full_house_sorted:
-        ranked_hands.append(hand)
-    for hand in four_of_a_kind_sorted:
-        ranked_hands.append(hand)
-    for hand in five_of_a_kind_sorted:
-        ranked_hands.append(hand)
-    total_winnings = 0
-    for index, hand in enumerate(ranked_hands):
-        total_winnings += hand[1] * (index + 1)
-    return total_winnings
+    deck = {'J': 0, '2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6, '8': 7, '9': 8, 'T': 9, 'Q': 10, 'K': 11, 'A': 12}
+    joker = True
+    return calculate_total_winnings(puzzle, deck, joker)
 
 
 if __name__ == "__main__":
