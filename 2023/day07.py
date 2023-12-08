@@ -55,9 +55,8 @@ def find_hand_type_with_joker(cards):
 
 def determine_hand_attributes(hand, deck, joker):
     cards, bid = hand
-    card_count = Counter(hand[0]).values()
-    card_values = list(map(lambda x: deck[x], hand[0]))
-
+    card_count = Counter(cards).values()
+    card_values = list(map(lambda card: deck[card], cards))
     if joker and "J" in cards:
         hand_type = find_hand_type_with_joker(cards)
         return cards, bid, hand_type, card_values
@@ -66,8 +65,8 @@ def determine_hand_attributes(hand, deck, joker):
         return cards, bid, hand_type, card_values
 
 
-def compare(entry):
-    return entry[3]
+def compare(hand):
+    return hand[3]
 
 
 def rank_hands(hands, deck, joker):
