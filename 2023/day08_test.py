@@ -16,10 +16,14 @@ def test_part_1():
     assert solve_part_1(puzzle) == 2
     puzzle = dummy_puzzle("day08_example2.txt")
     assert solve_part_1(puzzle) == 6
+    puzzle = dummy_puzzle("day08.txt")
+    assert solve_part_1(puzzle) == 14893
 
 
 
 def test_part_2():
     puzzle = dummy_puzzle("day08_example_part2.txt")
     assert solve_part_2(puzzle) == 6
+    puzzle = dummy_puzzle("day08.txt")
+    assert solve_part_2(puzzle) == 10241191004509
 
