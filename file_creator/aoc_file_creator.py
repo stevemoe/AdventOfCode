@@ -99,7 +99,7 @@ def build_test_code(puzzle):
     lines.append("def test_part_1():")
     lines.append("    puzzle = dummy_puzzle(\"day" + format_day(puzzle.day) + "_example.txt\")")
     for example in puzzle.examples:
-        if example.answer_a is None or int(example.answer_a):
+        if example.answer_a is None :
             lines.append("    assert solve_part_1(puzzle) == " + str(example.answer_a))
         else:
             lines.append("    assert solve_part_1(puzzle) == \"" + str(example.answer_a) + "\"" )
