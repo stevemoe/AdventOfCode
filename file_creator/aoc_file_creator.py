@@ -99,7 +99,7 @@ def build_test_code(puzzle):
     lines.append("def test_part_1():")
     lines.append("    puzzle = dummy_puzzle(\"day" + format_day(puzzle.day) + "_example.txt\")")
     for example in puzzle.examples:
-        if example.answer_a is None :
+        if example.answer_a is None or int(example.answer_a):
             lines.append("    assert solve_part_1(puzzle) == " + str(example.answer_a))
         else:
             lines.append("    assert solve_part_1(puzzle) == \"" + str(example.answer_a) + "\"" )
@@ -122,8 +122,8 @@ def create_test_file(puzzle):
     except FileExistsError:
         print("Test file already exists")
 
-year = 2022
-day = 5
+year = 2023
+day = 20
 
 if datetime.now().month == 12:
     year = datetime.now().year

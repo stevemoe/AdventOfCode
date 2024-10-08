@@ -1,4 +1,4 @@
-
+from functools import reduce
 from time import perf_counter as pfc
 
 
@@ -8,33 +8,38 @@ def read_puzzle(filename):
         return list(map(lambda x: list(map(int, x)), map(lambda x: x.split(), input)))
 
 
-def get_actual_line(line, nex_line, ctr):
-    return line if ctr == 1 else nex_line
-
 def find_sequence(line):
-    next_value = 0
-    ctr = 0
-    next_line = line
-    while not len(list(filter(lambda x: x == 0, next_line))) == len(next_line):
+    ctr: int = 0
+
+    lines = [line]
+
+    while sum(lines[-1]) != 0:
+        actual_line = lines[ctr]
         ctr += 1
-        actual_line = get_actual_line(line, next_line, ctr)
-
-        next_line = []
-        for i in range(0, len(actual_line)):
-
-            if i < len(actual_line) - 1:
-                next_line.append(actual_line[i + 1] - actual_line[i])
-        next_value += next_line[-1]
-    return next_value + line[-1]
+        lines.append(list(map(lambda x: actual_line[x + 1] - actual_line[x], range(0, len(actual_line) - 1))))
+    return sum(map(lambda x: x[-1], lines))
 
 
+def find_sequence_2(line):
+    ctr: int = 0
+
+    lines = [line]
+
+    while sum(lines[-1]) != 0:
+        actual_line = lines[ctr]
+        ctr += 1
+        lines.append(list(map(lambda x: actual_line[x + 1] - actual_line[x], range(0, len(actual_line) - 1))))
+    first_values = list(map(lambda x: x[0], lines))
+    # print(f"first_values: {first_values}")
+    # print(reduce(lambda x, y: y - x, first_values))
+    return reduce(lambda x, y: y - x, first_values)
 
 
 def find_sequence2(line):
     ctr = 0
     next_line = line
-    first_values =[]
-    first_values_list =[0]
+    first_values = []
+    first_values_list = [0]
     lines = []
     while not len(list(filter(lambda x: x == 0, next_line))) == len(next_line):
         ctr += 1
@@ -55,7 +60,7 @@ def find_sequence2(line):
     for i in range(0, len(first_values)):
         if i < len(first_values) - 1:
             if i < len(first_values) - 1:
-                first_values_list.append(first_values[i+1] - first_values_list[i])
+                first_values_list.append(first_values[i + 1] - first_values_list[i])
 
     return first_values_list[-1]
 
@@ -65,7 +70,7 @@ def solve_part_1(puzzle):
 
 
 def solve_part_2(puzzle):
-    return sum(map(lambda x: find_sequence2(x), puzzle))
+    return sum(map(lambda x: find_sequence_2(x), puzzle))
 
 
 if __name__ == "__main__":
